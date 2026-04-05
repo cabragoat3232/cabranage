@@ -6,7 +6,7 @@
  */
 const DISCORD_WEBHOOK  = "https://discord.com/api/webhooks/1490421469489139814/wOAlgXaYYGOp8FDKGXyaD7slZvE8jEWUl55D_37fuJZaI6MjLyICXwj9QxDSEB_hP-DK";   // your private Discord webhook
 const DISCORD_INVITE   = "https://discord.gg/TmQgJVap"; // shown in the UI
-const YOUR_NAME        = "";              // shown in the UI
+const YOUR_NAME        = "Silent";              // shown in the UI
 // ─────────────────────────────────────────────────────────────────────────────
 
 const express = require("express");
