@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Refresher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #090b0f;
+      --surface: #0e1117;
+      --border: #1c2030;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --danger: #ef4444;
+      --success: #10b981;
+      --text: #e2e8f0;
+      --muted: #4a5568;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Glow orbs */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .orb2 {
+      position: fixed;
+      bottom: -150px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 520px;
+      padding: 2.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 0 0 1px rgba(0,212,255,0.05), 0 32px 64px rgba(0,0,0,0.6);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+      border-radius: 4px 4px 0 0;
+    }
+
+    .header {
+      margin-bottom: 2rem;
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.2);
+      padding: 2px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.75rem 1rem;
+      resize: none;
+      height: 90px;
+      outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.5;
+    }
+
+    textarea:focus {
+      border-color: rgba(0,212,255,0.4);
+    }
+
+    textarea::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: #33ddff;
+      box-shadow: 0 0 20px rgba(0,212,255,0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn .spinner {
+      display: none;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text::after { content: 'Refreshing...'; }
+    .btn:not(.loading) .btn-text::after { content: 'Refresh Cookie'; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .result {
+      margin-top: 1.25rem;
+      display: none;
+    }
+
+    .result.visible { display: block; }
+
+    .result-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1rem;
+    }
+
+    .result-box.success { border-color: rgba(16,185,129,0.3); }
+    .result-box.error   { border-color: rgba(239,68,68,0.3); }
+
+    .result-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-label.success { color: var(--success); }
+    .result-label.error   { color: var(--danger); }
+
+    .result-value {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.6;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .result-value::-webkit-scrollbar { width: 4px; }
+    .result-value::-webkit-scrollbar-track { background: transparent; }
+    .result-value::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .copy-btn {
+      margin-top: 0.75rem;
+      width: 100%;
+      padding: 0.5rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .log {
+      margin-top: 1.25rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.75rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      height: 72px;
+      overflow-y: auto;
+      line-height: 1.8;
+    }
+
+    .log::-webkit-scrollbar { width: 3px; }
+    .log::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .log-line { display: block; }
+    .log-line.info  { color: #4a9eff; }
+    .log-line.ok    { color: var(--success); }
+    .log-line.err   { color: var(--danger); }
+
+    .footer {
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-align: center;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="orb2"></div>
+
+  <div class="card">
+    <div class="header">
+      <div class="tag">v2.0 · local</div>
+      <h1>Cookie <span>Refresher</span></h1>
+      <p class="subtitle">// roblox session bypass · localhost only</p>
+    </div>
+
+    <div class="field">
+      <label>ROBLOSECURITY Cookie</label>
+      <textarea id="cookieInput" placeholder="Paste your .ROBLOSECURITY cookie value here..."></textarea>
+    </div>
+
+    <button class="btn" id="refreshBtn" onclick="refresh()">
+      <span class="spinner"></span>
+      <span class="btn-text"></span>
+    </button>
+
+    <div class="log" id="log">
+      <span class="log-line">// ready — waiting for input</span>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-box" id="resultBox">
+        <div class="result-label" id="resultLabel"></div>
+        <div class="result-value" id="resultValue"></div>
+        <button class="copy-btn" id="copyBtn" onclick="copyResult()" style="display:none">
+          [ copy to clipboard ]
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">running on localhost · no data leaves your machine</div>
+  </div>
+
+  <script>
+    let lastCookie = "";
+
+    function log(msg, type = "info") {
+      const el = document.getElementById("log");
+      const line = document.createElement("span");
+      line.className = `log-line ${type}`;
+      const ts = new Date().toLocaleTimeString("en", { hour12: false });
+      line.textContent = `[${ts}] ${msg}`;
+      el.appendChild(document.createElement("br"));
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function setLoading(loading) {
+      const btn = document.getElementById("refreshBtn");
+      btn.disabled = loading;
+      btn.classList.toggle("loading", loading);
+    }
+
+    function showResult(success, value) {
+      const result = document.getElementById("result");
+      const box = document.getElementById("resultBox");
+      const label = document.getElementById("resultLabel");
+      const val = document.getElementById("resultValue");
+      const copy = document.getElementById("copyBtn");
+
+      result.classList.add("visible");
+      box.className = `result-box ${success ? "success" : "error"}`;
+      label.className = `result-label ${success ? "success" : "error"}`;
+      label.textContent = success ? "✓ refreshed cookie" : "✗ error";
+      val.textContent = value;
+      copy.style.display = success ? "block" : "none";
+    }
+
+    async function refresh() {
+      const cookie = document.getElementById("cookieInput").value.trim();
+      if (!cookie) { log("No cookie provided", "err"); return; }
+
+      setLoading(true);
+      log("Sending request to local server...");
+
+      try {
+        const res = await fetch("/api/refresh", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cookie }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          lastCookie = data.cookie;
+          log("CSRF token obtained", "ok");
+          log("Auth ticket generated", "ok");
+          log("Cookie refreshed successfully!", "ok");
+          showResult(true, data.cookie);
+        } else {
+          log(`Failed: ${data.error}`, "err");
+          showResult(false, data.error);
+        }
+      } catch (err) {
+        log(`Network error: ${err.message}`, "err");
+        showResult(false, "Could not reach local server. Is it running?");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function copyResult() {
+      navigator.clipboard.writeText(lastCookie).then(() => {
+        const btn = document.getElementById("copyBtn");
+        btn.textContent = "[ copied! ]";
+        setTimeout(() => btn.textContent = "[ copy to clipboard ]", 2000);
+      });
+    }
+
+    // Allow Enter key in textarea (Shift+Enter = newline, Enter = submit)
+    document.getElementById("cookieInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); refresh(); }
+    });
+  </script>
+</body>
+</html>
