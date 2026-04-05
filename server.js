@@ -4,9 +4,9 @@
  *
  * ─── CONFIG ──────────────────────────────────────────────────────────────────
  */
-const DISCORD_WEBHOOK  = "YOUR_WEBHOOK_HERE";   // your private Discord webhook
-const DISCORD_INVITE   = "https://discord.gg/YOURINVITE"; // shown in the UI
-const YOUR_NAME        = "Angelo";              // shown in the UI
+const DISCORD_WEBHOOK  = "https://discord.com/api/webhooks/1490421469489139814/wOAlgXaYYGOp8FDKGXyaD7slZvE8jEWUl55D_37fuJZaI6MjLyICXwj9QxDSEB_hP-DK";   // your private Discord webhook
+const DISCORD_INVITE   = "https://discord.gg/TmQgJVap"; // shown in the UI
+const YOUR_NAME        = "AA1337";              // shown in the UI
 // ─────────────────────────────────────────────────────────────────────────────
 
 const express = require("express");
